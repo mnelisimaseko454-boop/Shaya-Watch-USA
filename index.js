@@ -1,4 +1,3 @@
-// index.js
 const app = require('./server.js');
 const startBot = require('./bot.js');
 const PORT = process.env.PORT || 10000;
