@@ -6,18 +6,14 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// In-memory DB
 let users = {};
 function getUser(userId){
   if(!users[userId]){
     users[userId] = { id: userId, balance: 0, coins: 0, withdrawals: [], referrals: [] };
-    // Referral bonus
   }
   return users[userId];
 }
-function save(){}
 
-// API - Get User
 app.get('/api/user/:id', (req, res) => {
   const userId = req.params.id;
   const ref = req.query.ref;
@@ -32,7 +28,6 @@ app.get('/api/user/:id', (req, res) => {
   res.json({ success: true, user: u });
 });
 
-// API - Trending
 app.get('/api/trending', (req, res) => {
   res.json({ success: true, videos: [
     {id:'kJQP7kiw5Fk', title:'Luis Fonsi - Despacito ft. Daddy Yankee', channel:'Luis Fonsi', views:'8.5B views', category:'music'},
@@ -48,7 +43,6 @@ app.get('/api/trending', (req, res) => {
   ]});
 });
 
-// API - Watch Ad
 app.post('/api/watch-ad', (req, res) => {
   const { userId } = req.body;
   const u = getUser(userId);
@@ -57,7 +51,6 @@ app.post('/api/watch-ad', (req, res) => {
   res.json({ success: true, user: { balance: u.balance, coins: u.coins } });
 });
 
-// API - Convert
 app.post('/api/convert', (req, res) => {
   const { userId, coins } = req.body;
   const u = getUser(userId);
@@ -68,7 +61,6 @@ app.post('/api/convert', (req, res) => {
   res.json({ success:true, message:`✅ Converted ${coins} Coins = $${dollars.toFixed(2)}`, user:{ balance:u.balance, coins:u.coins } });
 });
 
-// API - Withdraw USDT ONLY
 app.post('/api/withdraw', (req, res) => {
   const { userId, amount, coins, method, details } = req.body;
   const u = getUser(userId);
@@ -89,7 +81,6 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Start Bot - only if token exists, don't crash if missing
 try{
   if(process.env.BOT_TOKEN) startBot();
   else console.log('No BOT_TOKEN - bot skipped, web only');
@@ -97,4 +88,3 @@ try{
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log('Server running on port ' + PORT));
-
