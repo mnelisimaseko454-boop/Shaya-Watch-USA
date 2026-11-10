@@ -6,23 +6,22 @@ function startBot(){
   const bot = new TelegramBot(BOT_TOKEN, { polling: true });
 
   bot.onText(/\/start(.*)/, (msg, match) => {
-    const startParam = (match[1] || "").trim();
-    const url = WEB_APP_URL + (startParam ? `?startapp=${startParam}` : ``);
-
     bot.sendMessage(msg.chat.id,
 `🇺🇸 SHAYA WATCH USA - Earn Real Cash!
 
-Watch Ads + Trending Videos, Get Paid!
+Watch Ads + Trending Videos, Get Paid in USDT!
 
 ✅ 1 Ad = $0.02 + 10 🪙 Profit Coins
 ✅ 1000 Coins = $1
-✅ Withdraw at $5 - PayPal / Cash App / Venmo
-✅ 5000 Coins = $5
+✅ Withdraw at $5 - USDT ONLY
+✅ 5000 Coins = $5 USDT
 
 🔥 Trending Videos Auto-Update Every Hour
 🎵 Music • 🎮 Gaming • ⚽ Sports • 😂 Viral
 
 🔗 Referral: $0.50 + 50 Coins per friend!
+
+💰 Withdrawals paid in USDT (TRC20 / BEP20)
 
 Tap below to start earning 👇`, {
       reply_markup: {
@@ -34,7 +33,7 @@ Tap below to start earning 👇`, {
   });
 
   bot.onText(/\/help/, (msg) => {
-    bot.sendMessage(msg.chat.id, "HOW IT WORKS:\n\n1. Tap OPEN\n2. Watch Ad = +$0.02 + 10 Coins\n3. Every 3rd ad = Bonus Interstitial Ad\n4. Convert 1000 Coins = $1\n5. At $5, withdraw via PayPal / Cash App\n6. Share link = $0.50 per friend").catch(e => console.log(e.message));
+    bot.sendMessage(msg.chat.id, "HOW IT WORKS:\n\n1. Tap OPEN\n2. Watch Ad = +$0.02 + 10 Coins\n3. Every 3rd ad = Bonus Interstitial Ad\n4. Convert 1000 Coins = $1\n5. At $5, withdraw in USDT ONLY\n6. Share link = $0.50 per friend\n\nWITHDRAW:\nSend your USDT wallet address (TRC20 / BEP20)\nMin $5 - Paid within 24h").catch(e => console.log(e.message));
   });
 
   bot.on("polling_error", (err) => console.log("Polling error:", err.message));
