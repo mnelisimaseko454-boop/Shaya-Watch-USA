@@ -1,12 +1,19 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shaya Watch USA - Earn USDT</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<!-- ONCLICKA TMA - REAL IDS -->
+<script>
+  window.ONCLICKA_REWARDED_SPOT = "6155140";
+  window.ONCLICKA_INPAGE_SPOT = "6155141";
+</script>
+<script src="https://sta.onclicka.com/js/tma.js" async></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-body{background:#0f0f0f;color:#fff;padding:12px;padding-bottom:80px}
+body{background:#0f0f0f;color:#fff;padding:12px;padding-bottom:120px}
 .header{text-align:center;padding:14px;background:linear-gradient(135deg,#ff0000,#ff4444);border-radius:14px;margin-bottom:12px}
 .header h1{font-size:22px}
 .header p{font-size:13px;opacity:.9;margin-top:4px}
@@ -31,31 +38,31 @@ body{background:#0f0f0f;color:#fff;padding:12px;padding-bottom:80px}
 .note{text-align:center;color:#888;font-size:12px;line-height:1.5;margin-top:12px}
 .referral{background:#1e1e1e;border:1px dashed #25f47e;border-radius:12px;padding:12px;text-align:center;margin-top:12px}
 .referral b{color:#25f47e}
-#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#25f47e;color:#000;padding:10px 18px;border-radius:20px;font-weight:700;display:none;z-index:999;font-size:14px;max-width:90%;text-align:center}
+#toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#25f47e;color:#000;padding:10px 18px;border-radius:20px;font-weight:700;display:none;z-index:999;font-size:14px;max-width:90%;text-align:center}
 #playerModal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.95);z-index:1000;padding:12px}
 #playerModal.show{display:block}
 #playerModal .closeBtn{width:100%;padding:12px;background:#ff0000;color:#fff;border:none;border-radius:10px;font-weight:700;margin-bottom:10px;cursor:pointer}
 #playerModal iframe{width:100%;height:280px;border:none;border-radius:12px;background:#000}
 #playerModal h3{font-size:14px;margin:10px 0;line-height:1.4}
 #playerModal .watchInApp{background:#25f47e;color:#000;width:100%;padding:14px;border:none;border-radius:12px;font-weight:700;margin-top:10px;cursor:pointer}
+#interstitial{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#000;z-index:2000;text-align:center;padding:20px}
+#interstitial.show{display:block}
+#interstitial .adBox{background:#1e1e1e;border-radius:14px;padding:20px;margin-top:40px}
+#interstitial .closeInter{margin-top:16px;padding:12px 20px;background:#25f47e;border:none;border-radius:10px;font-weight:700;cursor:pointer;width:100%}
+#bannerAd{position:fixed;bottom:0;left:0;right:0;background:#1e1e1e;border-top:2px solid #25f47e;padding:8px;text-align:center;z-index:900;min-height:60px}
+#bannerAd small{color:#888;font-size:10px;display:block}
+#bannerAd .bannerBox{background:#222;border-radius:8px;padding:10px;margin-top:4px;font-size:13px;cursor:pointer}
 </style>
 </head>
 <body>
-
-<div class="header">
-<h1>🇺🇸 SHAYA WATCH USA</h1>
-<p>Watch Ads. Earn Coins. Get Paid in USDT.</p>
-</div>
-
+<div class="header"><h1>🇺🇸 SHAYA WATCH USA</h1><p>Watch Ads. Earn Coins. Get Paid in USDT.</p></div>
 <div class="stats">
-<div class="card"><small>BALANCE</small><b id="balance">$0.00</b><span>USDT Ready</span></div>
+<div class="card"><small>BALANCE</small><b id="balance">$0.0000</b><span>USDT Ready</span></div>
 <div class="card"><small>PROFIT COINS</small><b id="coins">0 🪙</b><span>1000 = $1</span></div>
 </div>
-
-<button class="btn watch" id="watchBtn">▶️ WATCH AD - Earn $0.02 + 10 Coins</button>
+<button class="btn watch" id="watchBtn">▶️ WATCH AD - Earn $0.002 + 2 Coins</button>
 <button class="btn convert" id="convertBtn">🔄 Convert Coins to Cash (1000 Coins = $1)</button>
 <button class="btn withdraw" id="withdrawBtn">💳 Withdraw in USDT ONLY (Min $5)</button>
-
 <div class="tabs" id="tabs">
 <div class="tab active" data-cat="all">🔥 All Trending</div>
 <div class="tab" data-cat="music">🎵 Music</div>
@@ -63,26 +70,33 @@ body{background:#0f0f0f;color:#fff;padding:12px;padding-bottom:80px}
 <div class="tab" data-cat="sports">⚽ Sports</div>
 <div class="tab" data-cat="viral">😂 Viral</div>
 </div>
-
 <div class="grid" id="videoGrid"></div>
-
 <div class="referral">
-<b>🔗 Earn $0.50 Per Friend!</b><br>
-<span style="font-size:12px;color:#ccc">Share your link. Friend joins = You get $0.50 + 50 Coins</span><br><br>
+<b>🔗 Earn $0.10 Per Friend!</b><br>
+<span style="font-size:12px;color:#ccc">Share your link. Friend joins = You get $0.10 + 10 Coins</span><br><br>
 <button onclick="copyRef()" style="padding:10px 16px;border-radius:20px;border:none;background:#25f47e;font-weight:700;cursor:pointer">Copy Referral Link</button>
 </div>
-
 <p class="note">Watch full ad to get rewarded.<br>Balance updates instantly.<br>Withdraw in USDT ONLY (TRC20 / BEP20) - Min $5 - Paid within 24h</p>
-
 <div id="playerModal">
 <button class="closeBtn" onclick="closePlayer()">✕ CLOSE PLAYER</button>
 <iframe id="playerFrame" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 <h3 id="playerTitle"></h3>
 <button class="watchInApp" onclick="earnFromVideo()">▶️ WATCH AD TO EARN FROM THIS VIDEO</button>
 </div>
-
+<div id="interstitial">
+<div class="adBox">
+<h2>🎁 BONUS AD</h2>
+<p style="margin:12px 0;color:#ccc;font-size:14px;line-height:1.5">Watch this bonus ad to unlock extra reward!</p>
+<div id="onclicka-interstitial" style="background:#000;padding:20px;border-radius:10px;margin:10px 0;cursor:pointer" onclick="clickInterstitial()">👆 TAP TO VIEW BONUS AD</div>
+<p id="interTimer" style="color:#25f47e;font-weight:700">Please wait 5s...</p>
+<button class="closeInter" id="closeInterBtn" style="display:none" onclick="closeInterstitial()">✅ CLAIM BONUS + CONTINUE</button>
+</div>
+</div>
+<div id="bannerAd">
+<small>AD • Supports Shaya Watch USA</small>
+<div class="bannerBox" id="onclicka-banner" onclick="clickBannerAd()">📢 Sponsored - Tap to Support • Earn Free</div>
+</div>
 <div id="toast"></div>
-
 <script>
 const tg = window.Telegram.WebApp; tg.expand(); tg.ready();
 let userId = tg.initDataUnsafe?.user?.id?.toString() || localStorage.getItem('shaya_usa_id') || 'guest_' + Math.floor(Math.random()*999999);
@@ -91,28 +105,42 @@ let startParam = new URLSearchParams(location.search).get('startapp') || '';
 let balance = 0, coins = 0, adCount = 0;
 let allVideos = [];
 
-function showToast(m){ const t=document.getElementById('toast'); t.textContent=m; t.style.display='block'; setTimeout(()=>t.style.display='none', 3500); }
-function updateUI(){ document.getElementById('balance').textContent = '$' + balance.toFixed(2); document.getElementById('coins').textContent = coins + ' 🪙'; }
-
-async function loadUser(){
-  try{
-    const res = await fetch('/api/user/' + userId + (startParam ? '?ref=' + startParam : ''));
-    const data = await res.json();
-    if(data.success){ balance=data.user.balance; coins=data.user.coins; updateUI(); }
-  }catch(e){}
+// ===== ONCLICKA TMA - 6155140 + 6155141 =====
+const REWARDED_SPOT = "6155140";
+const INPAGE_SPOT = "6155141";
+function openPopunderAd(){
+  if(window.OnclickA && window.OnclickA.showRewarded){ window.OnclickA.showRewarded(REWARDED_SPOT); }
+  else if(window.onclicka && window.onclicka.show){ window.onclicka.show(REWARDED_SPOT); }
+  else { window.open('https://sta.onclicka.com/click?spot=' + REWARDED_SPOT, '_blank'); }
 }
+function showInterstitialAd(){
+  document.getElementById('interstitial').classList.add('show');
+  document.getElementById('closeInterBtn').style.display = 'none';
+  document.getElementById('interTimer').textContent = 'Please wait 5s...';
+  let s = 5;
+  const timer = setInterval(()=>{ s--; document.getElementById('interTimer').textContent = 'Please wait ' + s + 's...'; if(s<=0){ clearInterval(timer); document.getElementById('interTimer').textContent = '✅ Bonus Unlocked!'; document.getElementById('closeInterBtn').style.display = 'block'; } }, 1000);
+}
+function clickInterstitial(){ openPopunderAd(); showToast('Bonus Ad Opened - Thank you!'); }
+function closeInterstitial(){ document.getElementById('interstitial').classList.remove('show'); coins += 2; updateUI(); showToast('🎁 +2 Bonus Coins from Interstitial!'); }
+function clickBannerAd(){
+  if(window.OnclickA && window.OnclickA.showInpage){ window.OnclickA.showInpage(INPAGE_SPOT, document.getElementById('onclicka-banner')); }
+  else { window.open('https://sta.onclicka.com/click?spot=' + INPAGE_SPOT, '_blank'); }
+  showToast('Thanks for supporting!');
+}
+window.addEventListener('load', ()=>{ setTimeout(()=>{ if(window.OnclickA && window.OnclickA.showInpage){ window.OnclickA.showInpage(INPAGE_SPOT, document.getElementById('onclicka-banner')); } }, 2000); });
 
+function showToast(m){ const t=document.getElementById('toast'); t.textContent=m; t.style.display='block'; setTimeout(()=>t.style.display='none', 3500); }
+function updateUI(){ document.getElementById('balance').textContent = '$' + balance.toFixed(4); document.getElementById('coins').textContent = coins + ' 🪙'; }
+async function loadUser(){
+  try{ const res = await fetch('/api/user/' + userId + (startParam ? '?ref=' + startParam : '')); const data = await res.json(); if(data.success){ balance=data.user.balance; coins=data.user.coins; updateUI(); } }catch(e){}
+}
 async function loadVideos(){
-  try{
-    const res = await fetch('/api/trending');
-    const data = await res.json();
-    allVideos = data.videos || [];
-  }catch(e){ allVideos = []; }
+  try{ const res = await fetch('/api/trending'); const data = await res.json(); allVideos = data.videos || []; }catch(e){ allVideos = []; }
   if(!allVideos.length){
     allVideos = [
       {id:'kJQP7kiw5Fk', title:'Luis Fonsi - Despacito ft. Daddy Yankee', channel:'Luis Fonsi', views:'8.5B views', category:'music'},
       {id:'JGwWNGJdvx8', title:'Ed Sheeran - Shape of You', channel:'Ed Sheeran', views:'6.2B views', category:'music'},
-      {id:'RgKAFK5djSk', title:'Wiz Khalifa - See You Again ft. Charlie Puth', channel:'Wiz Khalifa', views:'6.5B views', category:'music'},
+      {id:'RgKAFK5djSk', title:'Wiz Khalifa - See You Again', channel:'Wiz Khalifa', views:'6.5B views', category:'music'},
       {id:'OPf0YbXqDm0', title:'Mark Ronson - Uptown Funk ft. Bruno Mars', channel:'Mark Ronson', views:'5.4B views', category:'music'},
       {id:'9bZkp7q19f0', title:'PSY - GANGNAM STYLE', channel:'officialpsy', views:'5.1B views', category:'viral'},
       {id:'Papuv5v5s9g', title:'MrBeast - $456,000 Squid Game In Real Life!', channel:'MrBeast', views:'650M views', category:'gaming'},
@@ -124,75 +152,43 @@ async function loadVideos(){
   }
   renderVideos('all');
 }
-
 function renderVideos(cat){
   const grid = document.getElementById('videoGrid');
   const list = cat==='all' ? allVideos : allVideos.filter(v=>v.category===cat);
-  grid.innerHTML = list.map(v=>`
-    <div class="video" onclick="watchVideo('${v.id}', '${v.title.replace(/'/g,"")}')">
-      <img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" onerror="this.src='https://i.ytimg.com/vi/kJQP7kiw5Fk/hqdefault.jpg'">
-      <div class="video-info"><b>${v.title}</b><span>${v.channel} • ${v.views||''}</span></div>
-    </div>
-  `).join('');
+  grid.innerHTML = list.map(v=>`<div class="video" onclick="watchVideo('${v.id}', '${v.title.replace(/'/g,"")}')"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg"><div class="video-info"><b>${v.title}</b><span>${v.channel} • ${v.views||''}</span></div></div>`).join('');
 }
+function watchVideo(id, title){ document.getElementById('playerFrame').src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0'; document.getElementById('playerTitle').textContent = title || ''; document.getElementById('playerModal').classList.add('show'); }
+function closePlayer(){ document.getElementById('playerFrame').src = ''; document.getElementById('playerModal').classList.remove('show'); }
+function earnFromVideo(){ closePlayer(); document.getElementById('watchBtn').click(); }
+document.querySelectorAll('.tab').forEach(t=>{ t.addEventListener('click', ()=>{ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); renderVideos(t.dataset.cat); }); });
 
-// FIXED: Open INSIDE Mini App, NOT redirect
-function watchVideo(id, title){
-  document.getElementById('playerFrame').src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0';
-  document.getElementById('playerTitle').textContent = title || '';
-  document.getElementById('playerModal').classList.add('show');
-  window.scrollTo(0,0);
-}
-function closePlayer(){
-  document.getElementById('playerFrame').src = '';
-  document.getElementById('playerModal').classList.remove('show');
-}
-function earnFromVideo(){
-  closePlayer();
-  document.getElementById('watchBtn').click();
-}
-
-document.querySelectorAll('.tab').forEach(t=>{
-  t.addEventListener('click', ()=>{
-    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    renderVideos(t.dataset.cat);
-  });
-});
-
+// ===== WATCH AD - OPTION 1 REWARD =====
 document.getElementById('watchBtn').addEventListener('click', async ()=>{
-  showToast('Loading ad... Watch to the end');
-  document.getElementById('watchBtn').textContent = '⏳ Watching Ad... (5s)';
+  openPopunderAd();
+  showToast('Ad Opened - Watch to earn...');
+  document.getElementById('watchBtn').textContent = '⏳ Watching Ad... (15s)';
   document.getElementById('watchBtn').disabled = true;
   setTimeout(async ()=>{
-    document.getElementById('watchBtn').textContent = '▶️ WATCH AD - Earn $0.02 + 10 Coins';
+    document.getElementById('watchBtn').textContent = '▶️ WATCH AD - Earn $0.002 + 2 Coins';
     document.getElementById('watchBtn').disabled = false;
     adCount++;
     try{
       const res = await fetch('/api/watch-ad', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId }) });
       const data = await res.json();
-      if(data.success){ balance=data.user.balance; coins=data.user.coins; updateUI(); showToast('✅ +$0.02 + 10 Coins! Balance: $' + balance.toFixed(2)); }
+      if(data.success){ balance=data.user.balance; coins=data.user.coins; updateUI(); showToast('✅ +$0.002 + 2 Coins! Balance: $' + balance.toFixed(4)); if(adCount % 3 === 0){ setTimeout(()=>{ showInterstitialAd(); }, 800); } }
       else showToast(data.message || 'Try again');
-    }catch(e){ balance+=0.02; coins+=10; updateUI(); showToast('✅ +$0.02 + 10 Coins!'); }
-  }, 5000);
+    }catch(e){ balance+=0.002; coins+=2; updateUI(); showToast('✅ +$0.002 + 2 Coins!'); }
+  }, 15000);
 });
-
 document.getElementById('convertBtn').addEventListener('click', async ()=>{
   if(coins < 1000){ showToast(`Need 1000 Coins to convert. You have ${coins}`); return; }
   const toConvert = Math.floor(coins/1000)*1000;
   if(!confirm(`Convert ${toConvert} Coins = $${(toConvert/1000).toFixed(2)} ?`)) return;
-  try{
-    const res = await fetch('/api/convert', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId, coins: toConvert }) });
-    const data = await res.json();
-    if(data.success){ balance=data.user.balance; coins=data.user.coins; updateUI(); showToast(data.message); }
-    else showToast(data.message);
-  }catch(e){ showToast('Convert failed, try again'); }
+  try{ const res = await fetch('/api/convert', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId, coins: toConvert }) }); const data = await res.json(); if(data.success){ balance=data.user.balance; coins=data.user.coins; updateUI(); showToast(data.message); } else showToast(data.message); }catch(e){ showToast('Convert failed, try again'); }
 });
-
-// FIXED: WITHDRAW USDT ONLY - NO PayPal / Cash App / Venmo
 document.getElementById('withdrawBtn').addEventListener('click', async ()=>{
-  if(balance < 5 && coins < 5000){ showToast(`Need $5 OR 5000 Coins. You have $${balance.toFixed(2)} + ${coins} Coins`); return; }
-  const method = prompt('Withdraw in USDT ONLY\n\nChoose network? Type: TRC20 or BEP20\n(TRC20 = lower fees)');
+  if(balance < 5 && coins < 5000){ showToast(`Need $5 OR 5000 Coins. You have $${balance.toFixed(4)} + ${coins} Coins`); return; }
+  const method = prompt('Withdraw in USDT ONLY\n\nChoose network? Type: TRC20 or BEP20');
   if(!method) return;
   const net = method.toUpperCase();
   if(net !== 'TRC20' && net !== 'BEP20'){ showToast('Please type TRC20 or BEP20 only - USDT ONLY'); return; }
@@ -200,19 +196,9 @@ document.getElementById('withdrawBtn').addEventListener('click', async ()=>{
   if(!details || details.length < 10){ showToast('Invalid wallet address'); return; }
   const ok = confirm('Confirm USDT Withdraw:\n\nAddress: ' + details + '\nNetwork: ' + net + ' (USDT)\nAmount: $5 USDT\n\nWrong address = lost funds. Is it correct?');
   if(!ok) return;
-  try{
-    const res = await fetch('/api/withdraw', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId, amount: 5, coins: coins >= 5000 ? 5000 : 0, method: net, details }) });
-    const data = await res.json();
-    if(data.success){ balance=data.user.balance; coins=data.user.coins; updateUI(); }
-    showToast(data.message);
-  }catch(e){ showToast('Withdraw failed, try again'); }
+  try{ const res = await fetch('/api/withdraw', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId, amount: 5, coins: coins >= 5000 ? 5000 : 0, method: net, details }) }); const data = await res.json(); if(data.success){ balance=data.user.balance; coins=data.user.coins; updateUI(); } showToast(data.message); }catch(e){ showToast('Withdraw failed, try again'); }
 });
-
-function copyRef(){
-  const link = 'https://t.me/ShayaWatchUSAEarnBot?start=' + userId;
-  navigator.clipboard.writeText(link).then(()=> showToast('Referral link copied!'));
-}
-
+function copyRef(){ const link = 'https://t.me/ShayaWatchUSAEarnBot?start=' + userId; navigator.clipboard.writeText(link).then(()=> showToast('Referral link copied!')); }
 loadUser(); loadVideos();
 </script>
 </body>
