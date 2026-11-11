@@ -5,10 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shaya Watch USA - Earn USDT</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<!-- ONCLICKA - IDs only, NO dead sta.onclicka.com script -->
+<!-- ONCLICKA - REAL NEW CODES - NO MORE sta.onclicka.com -->
+<script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
+<script async src="https://js.onclckmn.com/static/onclicka.js" data-admpid="472021"></script>
 <script>
-  window.ONCLICKA_REWARDED_SPOT = "6155140";
-  window.ONCLICKA_INPAGE_SPOT = "6155141";
+  // Rewarded Video - Spot 6155140
+  window.initCdTma?.({ id: '6155140' }).then(show => { window.showRewarded = show; }).catch(e => console.log(e));
 </script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif} body{background:#0f0f0f;color:#fff;padding:12px;padding-bottom:120px} .header{text-align:center;padding:14px;background:linear-gradient(135deg,#ff0000,#ff4444);border-radius:14px;margin-bottom:12px} .header h1{font-size:22px} .header p{font-size:13px;opacity:.9;margin-top:4px} .stats{display:flex;gap:8px;margin-bottom:12px} .card{flex:1;background:#1e1e1e;border-radius:12px;padding:12px;text-align:center;border:1px solid #333} .card small{color:#aaa;font-size:11px} .card b{font-size:20px;display:block;margin-top:4px} .card span{color:#25f47e;font-size:12px} .btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:10px} .watch{background:#25f47e;color:#000} .withdraw{background:#f5c518;color:#000} .convert{background:#333;color:#fff;border:1px solid #555} .tabs{display:flex;gap:6px;margin:14px 0;overflow-x:auto} .tab{padding:8px 14px;background:#222;border-radius:20px;font-size:13px;white-space:nowrap;cursor:pointer;border:1px solid #333} .tab.active{background:#ff0000;border-color:#ff0000} .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px} .video{background:#1e1e1e;border-radius:12px;overflow:hidden;cursor:pointer} .video img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block} .video-info{padding:8px} .video-info b{font-size:12px;line-height:1.3;display:block;height:32px;overflow:hidden} .video-info span{font-size:11px;color:#aaa} .note{text-align:center;color:#888;font-size:12px;line-height:1.5;margin-top:12px} .referral{background:#1e1e1e;border:1px dashed #25f47e;border-radius:12px;padding:12px;text-align:center;margin-top:12px} .referral b{color:#25f47e} #toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#25f47e;color:#000;padding:10px 18px;border-radius:20px;font-weight:700;display:none;z-index:999;font-size:14px;max-width:90%;text-align:center} #playerModal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.95);z-index:1000;padding:12px} #playerModal.show{display:block} #playerModal .closeBtn{width:100%;padding:12px;background:#ff0000;color:#fff;border:none;border-radius:10px;font-weight:700;margin-bottom:10px;cursor:pointer} #playerModal iframe{width:100%;height:280px;border:none;border-radius:12px;background:#000} #playerModal h3{font-size:14px;margin:10px 0;line-height:1.4} #playerModal .watchInApp{background:#25f47e;color:#000;width:100%;padding:14px;border:none;border-radius:12px;font-weight:700;margin-top:10px;cursor:pointer} #interstitial{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#000;z-index:2000;text-align:center;padding:20px} #interstitial.show{display:block} #interstitial .adBox{background:#1e1e1e;border-radius:14px;padding:20px;margin-top:40px} #interstitial .closeInter{margin-top:16px;padding:12px 20px;background:#25f47e;border:none;border-radius:10px;font-weight:700;cursor:pointer;width:100%} #bannerAd{position:fixed;bottom:0;left:0;right:0;background:#1e1e1e;border-top:2px solid #25f47e;padding:8px;text-align:center;z-index:900;min-height:60px} #bannerAd small{color:#888;font-size:10px;display:block} #bannerAd .bannerBox{background:#222;border-radius:8px;padding:10px;margin-top:4px;font-size:13px;cursor:pointer}
@@ -65,63 +67,6 @@ let startParam = new URLSearchParams(location.search).get('startapp') || '';
 let balance = 0, coins = 0, adCount = 0;
 let allVideos = [];
 
-const REWARDED_SPOT = "6155140";
-const INPAGE_SPOT = "6155141";
-
-// FIXED: Never open sta.onclicka.com - it is dead / NXDOMAIN
-// Only use OnclickA SDK if it actually loaded, otherwise use timer fallback
-function openPopunderAd(){
-  try{
-    if(window.OnclickA && window.OnclickA.showRewarded){
-      window.OnclickA.showRewarded(REWARDED_SPOT);
-      return true;
-    }
-    if(window.onclicka && window.onclicka.show){
-      window.onclicka.show(REWARDED_SPOT);
-      return true;
-    }
-  }catch(e){}
-  // No SDK - just show timer, do NOT open dead domain
-  return false;
-}
-
-function showInterstitialAd(){
-  document.getElementById('interstitial').classList.add('show');
-  document.getElementById('closeInterBtn').style.display = 'none';
-  document.getElementById('interTimer').textContent = 'Please wait 5s...';
-  let s = 5;
-  const timer = setInterval(()=>{
-    s--; document.getElementById('interTimer').textContent = 'Please wait ' + s + 's...';
-    if(s<=0){ clearInterval(timer); document.getElementById('interTimer').textContent = '✅ Bonus Unlocked!'; document.getElementById('closeInterBtn').style.display = 'block'; }
-  }, 1000);
-}
-function clickInterstitial(){
-  openPopunderAd();
-  showToast('Bonus Ad Opened - Thank you!');
-}
-function closeInterstitial(){
-  document.getElementById('interstitial').classList.remove('show');
-  coins += 2; updateUI(); showToast('🎁 +2 Bonus Coins from Interstitial!');
-}
-function clickBannerAd(){
-  try{
-    if(window.OnclickA && window.OnclickA.showInpage){
-      window.OnclickA.showInpage(INPAGE_SPOT, document.getElementById('onclicka-banner'));
-      return;
-    }
-  }catch(e){}
-  showToast('Thanks for supporting!');
-}
-window.addEventListener('load', ()=>{
-  setTimeout(()=>{
-    try{
-      if(window.OnclickA && window.OnclickA.showInpage){
-        window.OnclickA.showInpage(INPAGE_SPOT, document.getElementById('onclicka-banner'));
-      }
-    }catch(e){}
-  }, 2000);
-});
-
 function showToast(m){ const t=document.getElementById('toast'); t.textContent=m; t.style.display='block'; setTimeout(()=>t.style.display='none', 3500); }
 function updateUI(){ document.getElementById('balance').textContent = '$' + balance.toFixed(4); document.getElementById('coins').textContent = coins + ' 🪙'; }
 async function loadUser(){ try{ const res = await fetch('/api/user/' + userId + (startParam ? '?ref=' + startParam : '')); const data = await res.json(); if(data.success){ balance=data.user.balance; coins=data.user.coins; updateUI(); } }catch(e){} }
@@ -149,26 +94,62 @@ function closePlayer(){ document.getElementById('playerFrame').src = ''; documen
 function earnFromVideo(){ closePlayer(); document.getElementById('watchBtn').click(); }
 document.querySelectorAll('.tab').forEach(t=>{ t.addEventListener('click', ()=>{ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); renderVideos(t.dataset.cat); }); });
 
-// WATCH AD - Fixed, no dead domain
+// ===== ONCLICKA REAL - Rewarded 6155140 =====
+async function playRewardedAd(){
+  try{
+    if(window.showRewarded){
+      await window.showRewarded();
+      return true;
+    }
+    if(window.show){
+      await window.show();
+      return true;
+    }
+    // Try re-init if not ready yet
+    if(window.initCdTma){
+      const show = await window.initCdTma({ id: '6155140' });
+      window.showRewarded = show;
+      await show();
+      return true;
+    }
+  }catch(e){ console.log('Ad error', e); }
+  return false;
+}
+
+function showInterstitialAd(){
+  document.getElementById('interstitial').classList.add('show');
+  document.getElementById('closeInterBtn').style.display = 'none';
+  document.getElementById('interTimer').textContent = 'Please wait 5s...';
+  let s = 5;
+  const timer = setInterval(()=>{ s--; document.getElementById('interTimer').textContent = 'Please wait ' + s + 's...'; if(s<=0){ clearInterval(timer); document.getElementById('interTimer').textContent = '✅ Bonus Unlocked!'; document.getElementById('closeInterBtn').style.display = 'block'; } }, 1000);
+}
+function clickInterstitial(){ playRewardedAd().then(()=>{ showToast('Bonus Ad Opened - Thank you!'); }); }
+function closeInterstitial(){ document.getElementById('interstitial').classList.remove('show'); coins += 2; updateUI(); showToast('🎁 +2 Bonus Coins from Interstitial!'); }
+function clickBannerAd(){ showToast('Thanks for supporting!'); }
+
+// WATCH AD - Real OnclickA
 document.getElementById('watchBtn').addEventListener('click', async ()=>{
-  openPopunderAd();
-  showToast('Ad Opened - Watch to earn...');
-  document.getElementById('watchBtn').textContent = '⏳ Watching Ad... (15s)';
+  showToast('Loading Ad...');
+  document.getElementById('watchBtn').textContent = '⏳ Watching Ad...';
   document.getElementById('watchBtn').disabled = true;
-  setTimeout(async ()=>{
-    document.getElementById('watchBtn').textContent = '▶️ WATCH AD - Earn $0.002 + 2 Coins';
-    document.getElementById('watchBtn').disabled = false;
-    adCount++;
-    try{
-      const res = await fetch('/api/watch-ad', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId }) });
-      const data = await res.json();
-      if(data.success){
-        balance=data.user.balance; coins=data.user.coins; updateUI();
-        showToast('✅ +$0.002 + 2 Coins! Balance: $' + balance.toFixed(4));
-        if(adCount % 3 === 0){ setTimeout(()=>{ showInterstitialAd(); }, 800); }
-      } else showToast(data.message || 'Try again');
-    }catch(e){ balance+=0.002; coins+=2; updateUI(); showToast('✅ +$0.002 + 2 Coins!'); }
-  }, 15000);
+  const played = await playRewardedAd();
+  // If ad failed to load, still give reward after 15s fallback so user not stuck
+  if(!played){
+    showToast('Ad loading... Please wait 15s');
+    await new Promise(r=>setTimeout(r, 15000));
+  }
+  document.getElementById('watchBtn').textContent = '▶️ WATCH AD - Earn $0.002 + 2 Coins';
+  document.getElementById('watchBtn').disabled = false;
+  adCount++;
+  try{
+    const res = await fetch('/api/watch-ad', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId }) });
+    const data = await res.json();
+    if(data.success){
+      balance=data.user.balance; coins=data.user.coins; updateUI();
+      showToast('✅ +$0.002 + 2 Coins! Balance: $' + balance.toFixed(4));
+      if(adCount % 3 === 0){ setTimeout(()=>{ showInterstitialAd(); }, 800); }
+    } else showToast(data.message || 'Try again');
+  }catch(e){ balance+=0.002; coins+=2; updateUI(); showToast('✅ +$0.002 + 2 Coins!'); }
 });
 document.getElementById('convertBtn').addEventListener('click', async ()=>{
   if(coins < 1000){ showToast(`Need 1000 Coins to convert. You have ${coins}`); return; }
