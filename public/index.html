@@ -5,11 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shaya Watch USA - Earn USDT</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<!-- ONCLICKA - REAL NEW CODES - NO MORE sta.onclicka.com -->
+<!-- ONCLICKA - REAL NEW CODES -->
 <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
 <script async src="https://js.onclckmn.com/static/onclicka.js" data-admpid="472021"></script>
 <script>
-  // Rewarded Video - Spot 6155140
   window.initCdTma?.({ id: '6155140' }).then(show => { window.showRewarded = show; }).catch(e => console.log(e));
 </script>
 <style>
@@ -22,7 +21,18 @@
 <div class="card"><small>BALANCE</small><b id="balance">$0.0000</b><span>USDT Ready</span></div>
 <div class="card"><small>PROFIT COINS</small><b id="coins">0 🪙</b><span>1000 = $1</span></div>
 </div>
+
 <button class="btn watch" id="watchBtn">▶️ WATCH AD - Earn $0.002 + 2 Coins</button>
+
+<!-- ===== VIP STARS ===== -->
+<div style="background:#1e1e1e;border:1px solid #f5c518;border-radius:12px;padding:12px;margin-bottom:10px;text-align:center">
+  <b style="color:#f5c518">⭐ VIP - Earn 2x to 5x Faster!</b><br>
+  <span id="vipStatus" style="font-size:12px;color:#aaa">You are Free - 1x Earnings</span><br><br>
+  <button onclick="buyVip('vip7')" style="width:100%;padding:12px;border:none;border-radius:10px;background:#f5c518;font-weight:700;margin-bottom:6px;cursor:pointer">⭐ VIP 7 Days - 50 Stars - 2x Earnings</button>
+  <button onclick="buyVip('vip30')" style="width:100%;padding:12px;border:none;border-radius:10px;background:#ffaa00;font-weight:700;margin-bottom:6px;cursor:pointer">⭐ VIP 30 Days - 150 Stars - 3x Earnings</button>
+  <button onclick="buyVip('vipLife')" style="width:100%;padding:12px;border:none;border-radius:10px;background:#ff0000;color:#fff;font-weight:700;cursor:pointer">👑 VIP LIFETIME - 500 Stars - 5x Earnings</button>
+</div>
+
 <button class="btn convert" id="convertBtn">🔄 Convert Coins to Cash (1000 Coins = $1)</button>
 <button class="btn withdraw" id="withdrawBtn">💳 Withdraw in USDT ONLY (Min $5)</button>
 <div class="tabs" id="tabs">
@@ -66,10 +76,29 @@ localStorage.setItem('shaya_usa_id', userId);
 let startParam = new URLSearchParams(location.search).get('startapp') || '';
 let balance = 0, coins = 0, adCount = 0;
 let allVideos = [];
+let currentVipMult = 1;
+let currentVipUntil = 0;
 
 function showToast(m){ const t=document.getElementById('toast'); t.textContent=m; t.style.display='block'; setTimeout(()=>t.style.display='none', 3500); }
 function updateUI(){ document.getElementById('balance').textContent = '$' + balance.toFixed(4); document.getElementById('coins').textContent = coins + ' 🪙'; }
-async function loadUser(){ try{ const res = await fetch('/api/user/' + userId + (startParam ? '?ref=' + startParam : '')); const data = await res.json(); if(data.success){ balance=data.user.balance; coins=data.user.coins; updateUI(); } }catch(e){} }
+function updateVipUI(){
+  const el = document.getElementById('vipStatus');
+  const watchBtn = document.getElementById('watchBtn');
+  if(!el) return;
+  if(currentVipMult > 1){
+    const exp = currentVipUntil ? new Date(currentVipUntil).toLocaleDateString() : '';
+    el.textContent = `⭐ YOU ARE VIP ${currentVipMult}x - Earning ${currentVipMult}x per ad! Exp: ${exp}`;
+    el.style.color = '#f5c518';
+    const cash = (0.002 * currentVipMult).toFixed(4);
+    const c = 2 * currentVipMult;
+    watchBtn.textContent = `▶️ WATCH AD - Earn $${cash} + ${c} Coins (VIP ${currentVipMult}x)`;
+  } else {
+    el.textContent = 'You are Free - 1x Earnings';
+    el.style.color = '#aaa';
+    watchBtn.textContent = '▶️ WATCH AD - Earn $0.002 + 2 Coins';
+  }
+}
+async function loadUser(){ try{ const res = await fetch('/api/user/' + userId + (startParam ? '?ref=' + startParam : '')); const data = await res.json(); if(data.success){ balance=data.user.balance; coins=data.user.coins; currentVipMult = data.user.vipMult || 1; currentVipUntil = data.user.vipUntil || 0; updateUI(); updateVipUI(); } }catch(e){} }
 async function loadVideos(){
   try{ const res = await fetch('/api/trending'); const data = await res.json(); allVideos = data.videos || []; }catch(e){ allVideos = []; }
   if(!allVideos.length){
@@ -94,28 +123,26 @@ function closePlayer(){ document.getElementById('playerFrame').src = ''; documen
 function earnFromVideo(){ closePlayer(); document.getElementById('watchBtn').click(); }
 document.querySelectorAll('.tab').forEach(t=>{ t.addEventListener('click', ()=>{ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); renderVideos(t.dataset.cat); }); });
 
+// ===== VIP STARS =====
+async function buyVip(plan){
+  showToast('Creating Stars Invoice...');
+  try{
+    const res = await fetch('/api/create-vip', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId, plan }) });
+    const data = await res.json();
+    if(data.success) showToast('⭐ Check Telegram - Pay with Stars to activate VIP!');
+    else showToast(data.message || 'Failed - Open bot chat first, then tap START');
+  }catch(e){ showToast('Failed, try again'); }
+}
+
 // ===== ONCLICKA REAL - Rewarded 6155140 =====
 async function playRewardedAd(){
   try{
-    if(window.showRewarded){
-      await window.showRewarded();
-      return true;
-    }
-    if(window.show){
-      await window.show();
-      return true;
-    }
-    // Try re-init if not ready yet
-    if(window.initCdTma){
-      const show = await window.initCdTma({ id: '6155140' });
-      window.showRewarded = show;
-      await show();
-      return true;
-    }
+    if(window.showRewarded){ await window.showRewarded(); return true; }
+    if(window.show){ await window.show(); return true; }
+    if(window.initCdTma){ const show = await window.initCdTma({ id: '6155140' }); window.showRewarded = show; await show(); return true; }
   }catch(e){ console.log('Ad error', e); }
   return false;
 }
-
 function showInterstitialAd(){
   document.getElementById('interstitial').classList.add('show');
   document.getElementById('closeInterBtn').style.display = 'none';
@@ -124,32 +151,33 @@ function showInterstitialAd(){
   const timer = setInterval(()=>{ s--; document.getElementById('interTimer').textContent = 'Please wait ' + s + 's...'; if(s<=0){ clearInterval(timer); document.getElementById('interTimer').textContent = '✅ Bonus Unlocked!'; document.getElementById('closeInterBtn').style.display = 'block'; } }, 1000);
 }
 function clickInterstitial(){ playRewardedAd().then(()=>{ showToast('Bonus Ad Opened - Thank you!'); }); }
-function closeInterstitial(){ document.getElementById('interstitial').classList.remove('show'); coins += 2; updateUI(); showToast('🎁 +2 Bonus Coins from Interstitial!'); }
+function closeInterstitial(){ document.getElementById('interstitial').classList.remove('show'); coins += 2 * currentVipMult; updateUI(); showToast(`🎁 +${2 * currentVipMult} Bonus Coins from Interstitial!`); }
 function clickBannerAd(){ showToast('Thanks for supporting!'); }
 
-// WATCH AD - Real OnclickA
+// WATCH AD - Real OnclickA + VIP
 document.getElementById('watchBtn').addEventListener('click', async ()=>{
   showToast('Loading Ad...');
   document.getElementById('watchBtn').textContent = '⏳ Watching Ad...';
   document.getElementById('watchBtn').disabled = true;
   const played = await playRewardedAd();
-  // If ad failed to load, still give reward after 15s fallback so user not stuck
   if(!played){
     showToast('Ad loading... Please wait 15s');
     await new Promise(r=>setTimeout(r, 15000));
   }
-  document.getElementById('watchBtn').textContent = '▶️ WATCH AD - Earn $0.002 + 2 Coins';
   document.getElementById('watchBtn').disabled = false;
+  updateVipUI();
   adCount++;
   try{
     const res = await fetch('/api/watch-ad', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId }) });
     const data = await res.json();
     if(data.success){
-      balance=data.user.balance; coins=data.user.coins; updateUI();
-      showToast('✅ +$0.002 + 2 Coins! Balance: $' + balance.toFixed(4));
+      balance=data.user.balance; coins=data.user.coins;
+      currentVipMult = data.user.vipMult || currentVipMult;
+      updateUI(); updateVipUI();
+      showToast(data.message || `✅ Earned! Balance: $${balance.toFixed(4)}`);
       if(adCount % 3 === 0){ setTimeout(()=>{ showInterstitialAd(); }, 800); }
     } else showToast(data.message || 'Try again');
-  }catch(e){ balance+=0.002; coins+=2; updateUI(); showToast('✅ +$0.002 + 2 Coins!'); }
+  }catch(e){ const c=(0.002*currentVipMult); const co=(2*currentVipMult); balance+=c; coins+=co; updateUI(); showToast(`✅ +$${c.toFixed(4)} + ${co} Coins!`); }
 });
 document.getElementById('convertBtn').addEventListener('click', async ()=>{
   if(coins < 1000){ showToast(`Need 1000 Coins to convert. You have ${coins}`); return; }
