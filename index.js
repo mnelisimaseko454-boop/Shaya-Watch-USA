@@ -1,4 +1,3 @@
-// index.js - Shaya Watch USA - Website + Bot in ONE file
 const express = require('express');
 const path = require('path');
 const TelegramBot = require('node-telegram-bot-api');
@@ -61,7 +60,7 @@ app.post('/api/withdraw', (req, res)=>{
 
 app.get('/api/trending', (req,res)=> res.json({ videos: [] }));
 
-// ===== TELEGRAM BOT - SAFE, WILL NOT CRASH SERVER =====
+// ===== TELEGRAM BOT =====
 function startBot(){
   if(!BOT_TOKEN){
     console.log('⚠️ BOT_TOKEN not set - Bot skipped, website still running');
