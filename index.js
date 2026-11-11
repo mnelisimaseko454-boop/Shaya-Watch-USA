@@ -16,7 +16,7 @@ app.post('/api/convert', (req, res)=>{ const { userId, coins } = req.body; const
 app.post('/api/withdraw', (req, res)=>{ const { userId, amount, coins, method, details } = req.body; const u = getUser(userId); if(u.balance < amount && u.coins < 5000) return res.json({ success: false, message: 'Need $5 OR 5000 Coins' }); if(method !== 'TRC20' && method !== 'BEP20') return res.json({ success: false, message: 'USDT ONLY' }); if(u.balance >= amount) u.balance -= amount; else if(u.coins >= 5000) u.coins -= 5000; console.log(`WITHDRAW: User ${userId} - $5 USDT - ${method} - ${details}`); res.json({ success: true, user: u, message: `✅ Withdraw $5 USDT (${method}) requested!` }); });
 app.post('/api/create-vip', async (req, res)=>{
   const { userId, plan } = req.body;
-  const p = VIP_PLANS;
+  const p = VIP_PLANS; // <-- FIX 1 - HAS 
   if(!p) return res.json({ success: false, message: 'Invalid plan' });
   if(!BOT_TOKEN) return res.json({ success: false, message: 'Bot not configured' });
   try{
@@ -40,7 +40,7 @@ function startBot(){
           if(parts[0] === 'vip'){
             const plan = parts[1];
             const userId = parts[2] || msg.chat.id.toString();
-            const p = VIP_PLANS;
+            const p = VIP_PLANS; // <-- FIX 2 - HAS 
             if(p){
               const u = getUser(userId); u.vipMult = p.mult; u.vipUntil = Date.now() + (p.days * 24 * 60 * 60 * 1000); u.vipPlan = plan;
               bot.sendMessage(msg.chat.id, `✅ VIP ACTIVATED!\n\n⭐ ${p.title}\nYou now earn ${p.mult}x on every ad!\nExpires: ${new Date(u.vipUntil).toLocaleDateString()}`).catch(()=>{});
@@ -59,4 +59,3 @@ function startBot(){
 }
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, ()=>{ console.log('Server running on ' + PORT); startBot(); });
-
