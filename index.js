@@ -14,11 +14,9 @@ app.get('/api/user/:id', (req, res)=>{ const u = getUser(req.params.id); const r
 app.post('/api/watch-ad', (req, res)=>{ const u = getUser(req.body.userId); const mult = getVipMult(u); const earnCash = 0.002 * mult; const earnCoins = 2 * mult; u.balance += earnCash; u.coins += earnCoins; u.totalEarned += earnCash; res.json({ success: true, user: { ...u, vipMult: mult }, message: `✅ +$${earnCash.toFixed(4)} + ${earnCoins} Coins!${mult > 1 ? ` (VIP ${mult}x)` : ''}` }); });
 app.post('/api/convert', (req, res)=>{ const { userId, coins } = req.body; const u = getUser(userId); if(u.coins < coins) return res.json({ success: false, message: 'Not enough coins' }); const dollars = coins / 1000; u.coins -= coins; u.balance += dollars; res.json({ success: true, user: u, message: `✅ Converted ${coins} Coins = $${dollars.toFixed(2)}` }); });
 app.post('/api/withdraw', (req, res)=>{ const { userId, amount, coins, method, details } = req.body; const u = getUser(userId); if(u.balance < amount && u.coins < 5000) return res.json({ success: false, message: 'Need $5 OR 5000 Coins' }); if(method !== 'TRC20' && method !== 'BEP20') return res.json({ success: false, message: 'USDT ONLY' }); if(u.balance >= amount) u.balance -= amount; else if(u.coins >= 5000) u.coins -= 5000; console.log(`WITHDRAW: User ${userId} - $5 USDT - ${method} - ${details}`); res.json({ success: true, user: u, message: `✅ Withdraw $5 USDT (${method}) requested!` }); });
-
-// --- FIXED CREATE-VIP ---
 app.post('/api/create-vip', async (req, res)=>{
   const { userId, plan } = req.body;
-  const p = VIP_PLANS; // FIXED: was VIP_PLANS
+  const p = VIP_PLANS;
   if(!p) return res.json({ success: false, message: 'Invalid plan' });
   if(!BOT_TOKEN) return res.json({ success: false, message: 'Bot not configured' });
   try{
@@ -43,7 +41,7 @@ function startBot(){
           if(parts[0] === 'vip'){
             const plan = parts[1];
             const userId = parts[2] || msg.chat.id.toString();
-            const p = VIP_PLANS; // FIXED: was VIP_PLANS
+            const p = VIP_PLANS;
             if(p){
               const u = getUser(userId); u.vipMult = p.mult; u.vipUntil = Date.now() + (p.days * 24 * 60 * 60 * 1000); u.vipPlan = plan;
               console.log(`VIP ACTIVATED: ${userId} - ${plan} - ${p.mult}x until ${new Date(u.vipUntil)}`);
