@@ -28,8 +28,7 @@ app.post('/api/create-vip', async (req, res)=>{
 });
 app.get('/api/trending', (req,res)=> res.json({ videos: [] }));
 function startBot(){
-  if(!BOT_TOKEN){ console.log('⚠️ BOT_TOKEN not set - Bot skipped, website still running'); return null; }
-  console.log('Starting Telegram Bot...');
+  if(!BOT_TOKEN){ console.log('BOT_TOKEN not set'); return null; }
   try{
     const bot = new TelegramBot(BOT_TOKEN, { polling: true });
     bot.on('pre_checkout_query', (q) => { bot.answerPreCheckoutQuery(q.id, true).catch(e => console.log(e.message)); });
@@ -44,20 +43,19 @@ function startBot(){
             const p = VIP_PLANS;
             if(p){
               const u = getUser(userId); u.vipMult = p.mult; u.vipUntil = Date.now() + (p.days * 24 * 60 * 60 * 1000); u.vipPlan = plan;
-              console.log(`VIP ACTIVATED: ${userId} - ${plan} - ${p.mult}x until ${new Date(u.vipUntil)}`);
-              bot.sendMessage(msg.chat.id, `✅ VIP ACTIVATED!\n\n⭐ ${p.title}\nYou now earn ${p.mult}x on every ad!\nExpires: ${new Date(u.vipUntil).toLocaleDateString()}\n\nTap OPEN and watch ads!`).catch(()=>{});
+              bot.sendMessage(msg.chat.id, `✅ VIP ACTIVATED!\n\n⭐ ${p.title}\nYou now earn ${p.mult}x on every ad!\nExpires: ${new Date(u.vipUntil).toLocaleDateString()}`).catch(()=>{});
             }
           }
         }catch(e){ console.log("VIP payment error:", e.message); }
       }
     });
-    bot.onText(/\/start(.*)/, (msg, match) => { bot.sendMessage(msg.chat.id, `🇺🇸 SHAYA WATCH USA - Earn Real Cash!\n\nWatch Ads + Trending Videos, Get Paid in USDT!\n\n✅ 1 Ad = $0.002 + 2 🪙 Profit Coins\n✅ 1000 Coins = $1\n✅ Withdraw at $5 - USDT ONLY\n✅ 5000 Coins = $5 USDT\n✅ Referral: $0.10 + 10 Coins per friend!\n\n⭐ VIP - Earn 2x to 5x Faster!\n⭐ VIP 7 Days - 50 Stars = 2x\n⭐ VIP 30 Days - 150 Stars = 3x\n👑 VIP Lifetime - 500 Stars = 5x\n\n🔥 Trending Videos Auto-Update Every Hour\n🎵 Music • 🎮 Gaming • ⚽ Sports • 😂 Viral\n\n💰 Withdrawals paid in USDT (TRC20 / BEP20)\n\nTap below to start earning 👇`, { reply_markup: { inline_keyboard: [[{ text: "🚀 OPEN SHAYA WATCH USA", web_app: { url: WEB_APP_URL } }]] } }).catch(e => console.log("Send error:", e.message)); });
-    bot.onText(/\/vip/, (msg) => { bot.sendMessage(msg.chat.id, `⭐ SHAYA VIP - Earn Faster!\n\n⭐ VIP 7 Days - 50 Stars - 2x Earnings\n⭐ VIP 30 Days - 150 Stars - 3x Earnings\n👑 VIP Lifetime - 500 Stars - 5x Earnings\n\nOpen the app and tap a VIP button to buy with Stars!`, { reply_markup: { inline_keyboard: [[{ text: "⭐ OPEN VIP", web_app: { url: WEB_APP_URL } }]] } }).catch(()=>{}); });
-    bot.onText(/\/help/, (msg) => { bot.sendMessage(msg.chat.id, "HOW IT WORKS:\n\n1. Tap OPEN\n2. Watch Ad = +$0.002 + 2 Coins (VIP = up to 5x)\n3. Every 3rd ad = Bonus Interstitial Ad\n4. Convert 1000 Coins = $1\n5. At $5, withdraw in USDT ONLY\n6. Share link = $0.10 per friend\n7. /vip - Buy VIP with Stars for 2x-5x").catch(e => console.log(e.message)); });
+    bot.onText(/\/start(.*)/, (msg, match) => { bot.sendMessage(msg.chat.id, `🇺🇸 SHAYA WATCH USA - Earn Real Cash!\n\nWatch Ads + Trending Videos, Get Paid in USDT!\n\n✅ 1 Ad = $0.002 + 2 Coins\n✅ 1000 Coins = $1\n✅ Withdraw at $5 - USDT ONLY\n✅ Referral: $0.10 + 10 Coins per friend!\n\n⭐ VIP 7 Days - 50 Stars = 2x\n⭐ VIP 30 Days - 150 Stars = 3x\n👑 VIP Lifetime - 500 Stars = 5x\n\nTap below to start earning 👇`, { reply_markup: { inline_keyboard: [[{ text: "🚀 OPEN SHAYA WATCH USA", web_app: { url: WEB_APP_URL } }]] } }).catch(e => console.log("Send error:", e.message)); });
+    bot.onText(/\/vip/, (msg) => { bot.sendMessage(msg.chat.id, `⭐ SHAYA VIP - Earn Faster!\n\n⭐ VIP 7 Days - 50 Stars - 2x\n⭐ VIP 30 Days - 150 Stars - 3x\n👑 VIP Lifetime - 500 Stars - 5x`, { reply_markup: { inline_keyboard: [[{ text: "⭐ OPEN VIP", web_app: { url: WEB_APP_URL } }]] } }).catch(()=>{}); });
+    bot.onText(/\/help/, (msg) => { bot.sendMessage(msg.chat.id, "HOW IT WORKS:\n\n1. Tap OPEN\n2. Watch Ad = +$0.002 + 2 Coins (VIP = up to 5x)\n3. Convert 1000 Coins = $1\n4. At $5, withdraw in USDT ONLY\n5. Share link = $0.10 per friend").catch(e => console.log(e.message)); });
     bot.on("polling_error", (err) => console.log("Polling error:", err.message));
     console.log("USA Bot started...");
     return bot;
-  }catch(e){ console.log('Bot start failed, website still running: ' + e.message); return null; }
+  }catch(e){ console.log('Bot start failed: ' + e.message); return null; }
 }
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, ()=>{ console.log('Server running on ' + PORT); startBot(); });
