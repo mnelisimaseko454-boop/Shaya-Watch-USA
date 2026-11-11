@@ -1,18 +1,29 @@
 const express = require('express');
 const path = require('path');
 const TelegramBot = require('node-telegram-bot-api');
-
 const BOT_TOKEN = process.env.BOT_TOKEN || "";
 const WEB_APP_URL = process.env.WEB_APP_URL || "https://shaya-watch-usa.onrender.com";
-
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 let users = {};
 function getUser(id){
-  if(!users[id]) users[id] = { id, balance: 0, coins: 0, referrals: 0, totalEarned: 0 };
+  if(!users[id]) users[id] = { id, balance: 0, coins: 0, referrals: 0, totalEarned: 0, vipMult: 1, vipUntil: 0, vipPlan: null };
   return users[id];
+}
+
+// ===== VIP PLANS =====
+const VIP_PLANS = {
+  vip7: { stars: 50, days: 7, mult: 2, title: "VIP 7 Days - 2x Earnings" },
+  vip30: { stars: 150, days: 30, mult: 3, title: "VIP 30 Days - 3x Earnings" },
+  vipLife: { stars: 500, days: 3650, mult: 5, title: "VIP Lifetime - 5x Earnings" }
+};
+
+function getVipMult(u){
+  if(u.vipUntil && Date.now() < u.vipUntil) return u.vipMult || 1;
+  u.vipMult = 1;
+  return 1;
 }
 
 // ===== API =====
@@ -26,15 +37,19 @@ app.get('/api/user/:id', (req, res)=>{
     referrer.coins += 10;
     referrer.referrals += 1;
   }
-  res.json({ success: true, user: u });
+  // Include VIP in response
+  res.json({ success: true, user: { ...u, vipMult: getVipMult(u) } });
 });
 
 app.post('/api/watch-ad', (req, res)=>{
   const u = getUser(req.body.userId);
-  u.balance += 0.002;
-  u.coins += 2;
-  u.totalEarned += 0.002;
-  res.json({ success: true, user: u, message: '✅ +$0.002 + 2 Coins!' });
+  const mult = getVipMult(u);
+  const earnCash = 0.002 * mult;
+  const earnCoins = 2 * mult;
+  u.balance += earnCash;
+  u.coins += earnCoins;
+  u.totalEarned += earnCash;
+  res.json({ success: true, user: { ...u, vipMult: mult }, message: `✅ +$${earnCash.toFixed(4)} + ${earnCoins} Coins!${mult > 1 ? ` (VIP ${mult}x)` : ''}` });
 });
 
 app.post('/api/convert', (req, res)=>{
@@ -58,54 +73,98 @@ app.post('/api/withdraw', (req, res)=>{
   res.json({ success: true, user: u, message: `✅ Withdraw $5 USDT (${method}) requested!` });
 });
 
+// ===== STARS VIP - CREATE INVOICE =====
+app.post('/api/create-vip', async (req, res)=>{
+  const { userId, plan } = req.body;
+  const p = VIP_PLANS;
+  if(!p) return res.json({ success: false, message: 'Invalid plan' });
+  if(!BOT_TOKEN) return res.json({ success: false, message: 'Bot not configured' });
+  try{
+    const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendInvoice`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: userId,
+        title: p.title,
+        description: `Shaya Watch USA ${p.title}. Earn ${p.mult}x per ad for ${p.days} days.`,
+        payload: `vip_${plan}_${userId}`,
+        provider_token: "",
+        currency: "XTR",
+        prices: [{ label: p.title, amount: p.stars }],
+        start_parameter: "vip"
+      })
+    });
+    const d = await r.json();
+    if(!d.ok) return res.json({ success: false, message: d.description || 'Invoice failed - Open bot chat first, then tap START' });
+    res.json({ success: true });
+  }catch(e){ res.json({ success: false, message: 'Invoice failed' }); }
+});
+
 app.get('/api/trending', (req,res)=> res.json({ videos: [] }));
 
 // ===== TELEGRAM BOT =====
 function startBot(){
-  if(!BOT_TOKEN){
-    console.log('⚠️ BOT_TOKEN not set - Bot skipped, website still running');
-    return null;
-  }
+  if(!BOT_TOKEN){ console.log('⚠️ BOT_TOKEN not set - Bot skipped, website still running'); return null; }
   console.log('Starting Telegram Bot...');
   try{
     const bot = new TelegramBot(BOT_TOKEN, { polling: true });
+
+    // Pre-checkout - MUST approve Stars payments
+    bot.on('pre_checkout_query', (q) => {
+      bot.answerPreCheckoutQuery(q.id, true).catch(e => console.log(e.message));
+    });
+
+    // Successful Stars payment -> Activate VIP
+    bot.on('message', (msg) => {
+      if(msg.successful_payment){
+        try{
+          const payload = msg.successful_payment.invoice_payload || ""; // vip_vip7_123456
+          const parts = payload.split('_'); // [vip, vip7, userId]
+          if(parts[0] === 'vip'){
+            const plan = parts[1];
+            const userId = parts[2] || msg.chat.id.toString();
+            const p = VIP_PLANS;
+            if(p){
+              const u = getUser(userId);
+              u.vipMult = p.mult;
+              u.vipUntil = Date.now() + (p.days * 24 * 60 * 60 * 1000);
+              u.vipPlan = plan;
+              console.log(`VIP ACTIVATED: ${userId} - ${plan} - ${p.mult}x until ${new Date(u.vipUntil)}`);
+              bot.sendMessage(msg.chat.id, `✅ VIP ACTIVATED!\n\n⭐ ${p.title}\nYou now earn ${p.mult}x on every ad!\nExpires: ${new Date(u.vipUntil).toLocaleDateString()}\n\nTap OPEN and watch ads!`).catch(()=>{});
+            }
+          }
+        }catch(e){ console.log("VIP payment error:", e.message); }
+      }
+    });
+
     bot.onText(/\/start(.*)/, (msg, match) => {
-      bot.sendMessage(msg.chat.id,
-`🇺🇸 SHAYA WATCH USA - Earn Real Cash!
-
-Watch Ads + Trending Videos, Get Paid in USDT!
-
-✅ 1 Ad = $0.002 + 2 🪙 Profit Coins
-✅ 1000 Coins = $1
-✅ Withdraw at $5 - USDT ONLY
-✅ 5000 Coins = $5 USDT
-
-🔥 Trending Videos Auto-Update Every Hour
-🎵 Music • 🎮 Gaming • ⚽ Sports • 😂 Viral
-
-🔗 Referral: $0.10 + 10 Coins per friend!
-
-💰 Withdrawals paid in USDT (TRC20 / BEP20)
-
-Tap below to start earning 👇`, {
-        reply_markup: { inline_keyboard: [[{ text: "🚀 OPEN SHAYA WATCH USA", web_app: { url: WEB_APP_URL } }]] }
-      }).catch(e => console.log("Send error:", e.message));
+      bot.sendMessage(msg.chat.id, `🇺🇸 SHAYA WATCH USA - Earn Real Cash!\n\nWatch Ads + Trending Videos, Get Paid in USDT!\n\n✅ 1 Ad = $0.002 + 2 🪙 Profit Coins\n✅ 1000 Coins = $1\n✅ Withdraw at $5 - USDT ONLY\n✅ 5000 Coins = $5 USDT\n✅ Referral: $0.10 + 10 Coins per friend!\n\n⭐ VIP - Earn 2x to 5x Faster!\n⭐ VIP 7 Days - 50 Stars = 2x\n⭐ VIP 30 Days - 150 Stars = 3x\n👑 VIP Lifetime - 500 Stars = 5x\n\n🔥 Trending Videos Auto-Update Every Hour\n🎵 Music • 🎮 Gaming • ⚽ Sports • 😂 Viral\n\n💰 Withdrawals paid in USDT (TRC20 / BEP20)\n\nTap below to start earning 👇`, { reply_markup: { inline_keyboard: [[{ text: "🚀 OPEN SHAYA WATCH USA", web_app: { url: WEB_APP_URL } }]] } }).catch(e => console.log("Send error:", e.message));
     });
+
+    bot.onText(/\/vip/, (msg) => {
+      bot.sendMessage(msg.chat.id, `⭐ SHAYA VIP - Earn Faster!\n\n⭐ VIP 7 Days - 50 Stars - 2x Earnings\n⭐ VIP 30 Days - 150 Stars - 3x Earnings\n👑 VIP Lifetime - 500 Stars - 5x Earnings\n\nOpen the app and tap a VIP button to buy with Stars!`, { reply_markup: { inline_keyboard: [[{ text: "⭐ OPEN VIP", web_app: { url: WEB_APP_URL } }]] } }).catch(()=>{});
+    });
+
     bot.onText(/\/help/, (msg) => {
-      bot.sendMessage(msg.chat.id, "HOW IT WORKS:\n\n1. Tap OPEN\n2. Watch Ad = +$0.002 + 2 Coins\n3. Every 3rd ad = Bonus Interstitial Ad\n4. Convert 1000 Coins = $1\n5. At $5, withdraw in USDT ONLY\n6. Share link = $0.10 per friend").catch(e => console.log(e.message));
+      bot.sendMessage(msg.chat.id, "HOW IT WORKS:\n\n1. Tap OPEN\n2. Watch Ad = +$0.002 + 2 Coins (VIP = up to 5x)\n3. Every 3rd ad = Bonus Interstitial Ad\n4. Convert 1000 Coins = $1\n5. At $5, withdraw in USDT ONLY\n6. Share link = $0.10 per friend\n7. /vip - Buy VIP with Stars for 2x-5x").catch(e => console.log(e.message));
     });
+
     bot.on("polling_error", (err) => console.log("Polling error:", err.message));
     console.log("USA Bot started...");
     return bot;
-  }catch(e){
-    console.log('Bot start failed, website still running: ' + e.message);
-    return null;
-  }
+  }catch(e){ console.log('Bot start failed, website still running: ' + e.message); return null; }
 }
 
 // ===== START =====
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, ()=>{
-  console.log('Server running on ' + PORT);
-  startBot();
-});
+app.listen(PORT, ()=>{ console.log('Server running on ' + PORT); startBot(); });
+
+
+What changed in this version:
+
+- Added: vipMult, vipUntil, vipPlan to every user
+- Added: /api/create-vip - Creates Telegram Stars invoice
+- Added: pre_checkout_query - Approves Stars payment (required, or payment fails)
+- Added: successful_payment handler - Auto-activates VIP when user pays Stars
+- Changed: /api/watch-ad - Now pays 0.002 * mult and 2 * mult. VIP 5x = $0.01 + 10 Coins per ad
+- Added: /vip command + updated /start with VIP plans
